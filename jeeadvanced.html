@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JEE Advanced Score Calculator</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #101827, #243b55);
+    color: white;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 600px;
+    margin: 20px auto;
+    background: #ffffff;
+    color: #172033;
+    padding: 25px;
+    border-radius: 18px;
+    box-shadow: 0 10px 35px #0005;
+}
+
+h1 {
+    text-align: center;
+    color: #2457d6;
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    text-align: center;
+    color: #667085;
+    margin-bottom: 25px;
+}
+
+label {
+    display: block;
+    margin: 15px 0 7px;
+    font-weight: bold;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+    font-size: 16px;
+}
+
+.subject {
+    background: #f1f5f9;
+    padding: 15px;
+    border-radius: 12px;
+    margin: 12px 0;
+}
+
+.subject h3 {
+    margin: 0 0 10px;
+    color: #2457d6;
+}
+
+button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    background: #2457d6;
+    color: white;
+    font-size: 17px;
+    font-weight: bold;
+    margin-top: 20px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1742ad;
+}
+
+.result {
+    display: none;
+    margin-top: 22px;
+    padding: 20px;
+    background: #ecfdf3;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.score {
+    font-size: 36px;
+    font-weight: bold;
+    color: #087443;
+    margin: 10px 0;
+}
+
+.details {
+    line-height: 1.9;
+    text-align: left;
+}
+
+.note {
+    color: #667085;
+    font-size: 12px;
+    line-height: 1.6;
+    margin-top: 18px;
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 18px;
+        margin: 5px auto;
+    }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+    <h1>JEE Advanced</h1>
+    <br>
+    <h1>By Abhay Verma NITP (CSE)</h1>
+    <p class="subtitle">Score Calculator</p>
+
+    <label for="paper1">Paper 1 Maximum Marks</label>
+    <input type="number" id="paper1" value="180" min="0">
+
+    <label for="paper2">Paper 2 Maximum Marks</label>
+    <input type="number" id="paper2" value="180" min="0">
+
+    <p><b>Enter your marks in each subject</b></p>
+
+    <div class="subject">
+        <h3>Physics</h3>
+        <label for="phy">Paper 1 marks</label>
+        <input type="number" id="phy" value="0">
+        <label for="phy2">Paper 2 marks</label>
+        <input type="number" id="phy2" value="0">
+    </div>
+
+    <div class="subject">
+        <h3>Chemistry</h3>
+        <label for="chem">Paper 1 marks</label>
+        <input type="number" id="chem" value="0">
+        <label for="chem2">Paper 2 marks</label>
+        <input type="number" id="chem2" value="0">
+    </div>
+
+    <div class="subject">
+        <h3>Mathematics</h3>
+        <label for="math">Paper 1 marks</label>
+        <input type="number" id="math" value="0">
+        <label for="math2">Paper 2 marks</label>
+        <input type="number" id="math2" value="0">
+    </div>
+
+    <button onclick="calculateScore()">Calculate Score</button>
+    <button onclick="resetCalculator()" style="background:#64748b;margin-top:10px">
+        Reset
+    </button>
+
+    <div class="result" id="result" aria-live="polite">
+        <h2>Your Total Score</h2>
+        <div class="score" id="total">0 / 360</div>
+        <div class="details" id="details"></div>
+    </div>
+
+    <p class="note">
+        Note: Maximum marks vary by examination year. Enter the actual
+        maximum marks for your paper. This calculator totals the marks
+        you enter; it does not determine official rank, cutoff, or
+        qualification. Negative marking must be included in your
+        subject scores according to the official marking scheme.
+    </p>
+</div>
+
+<script>
+function getNumber(id) {
+    return Number(document.getElementById(id).value);
+}
+
+function calculateScore() {
+    const ids = [
+        "paper1", "paper2",
+        "phy", "phy2", "chem", "chem2", "math", "math2"
+    ];
+
+    const values = {};
+    for (const id of ids) {
+        const input = document.getElementById(id);
+        const value = Number(input.value);
+
+        if (input.value.trim() === "" ||
+            !Number.isFinite(value) || value < 0) {
+            alert("Please enter valid non-negative numbers.");
+            input.focus();
+            return;
+        }
+        values[id] = value;
+    }
+
+    const max1 = values.paper1;
+    const max2 = values.paper2;
+
+    if (max1 <= 0 || max2 <= 0) {
+        alert("Maximum marks must be greater than zero.");
+        return;
+    }
+
+    const p1 = values.phy + values.chem + values.math;
+    const p2 = values.phy2 + values.chem2 + values.math2;
+
+    if (p1 > max1 || p2 > max2) {
+        alert("Subject marks exceed the maximum marks for a paper.");
+        return;
+    }
+
+    const physics = values.phy + values.phy2;
+    const chemistry = values.chem + values.chem2;
+    const mathematics = values.math + values.math2;
+    const total = physics + chemistry + mathematics;
+    const maximum = max1 + max2;
+    const percentage = (total / maximum) * 100;
+
+    document.getElementById("total").textContent =
+        total + " / " + maximum;
+
+    document.getElementById("details").innerHTML = `
+        <b>Physics:</b> ${physics}<br>
+        <b>Chemistry:</b> ${chemistry}<br>
+        <b>Mathematics:</b> ${mathematics}<br>
+        <b>Paper 1 total:</b> ${p1} / ${max1}<br>
+        <b>Paper 2 total:</b> ${p2} / ${max2}<br>
+        <b>Score percentage:</b> ${percentage.toFixed(2)}%
+    `;
+
+    document.getElementById("result").style.display = "block";
+}
+
+function resetCalculator() {
+    document.querySelectorAll('input').forEach(input => {
+        input.value = input.id === "paper1" ||
+                      input.id === "paper2" ? 180 : 0;
+    });
+
+    document.getElementById("result").style.display = "none";
+}
+</script>
+</body>
+</html>
